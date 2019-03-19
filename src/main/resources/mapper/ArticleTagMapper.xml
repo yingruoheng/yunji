@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunji.dao.ArticleTagMapper">
+  <resultMap id="BaseResultMap" type="com.yunji.model.ArticleTag">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="articleId" jdbcType="INTEGER" property="articleid" />
+    <result column="tagname" jdbcType="VARCHAR" property="tagname" />
+    <result column="tagvalue" jdbcType="VARCHAR" property="tagvalue" />
+  </resultMap>
+
+  <insert id="addArticleTag" parameterType="com.yunji.model.ArticleTag">
+    insert into articletag
+    (id,articleId,tagname,tagvalue)
+    values
+    (#{id},#{articleId},#{tagname},#{tagvalue})
+  </insert>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yunji.dao.AccountMapper">
+    <select id="selectUser" parameterType="java.lang.String" resultType="com.yunji.model.User">
+        SELECT * from user where userId = #{userId}
+    </select>
+
+    <insert id="saveUser" useGeneratedKeys="true" keyColumn="userId" keyProperty="userId" parameterType="com.yunji.model.User">
+        INSERT INTO user (username,password,createtime,way,wayId) VALUES (#{username},#{password},now(),#{way},#{wayId})
+    </insert>
+
+    <select id="getInterestAmout" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(toUserId) FROM interest where userId = #{userId}
+    </select>
+
+    <select id="getInterestList" parameterType="java.util.HashMap" resultType="com.yunji.model.Interest">
+        SELECT * FROM interest
+        <where>
+            <if test="createTime != null">
+                userId=#{userId} AND createTime &lt; #{createTime} ORDER BY createTime DESC
+            </if>
+            <if test="createTime == null">
+                userId=#{userId} ORDER BY createTime DESC
+
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+
+        </where>
+    </select>
+
+    <delete id="deleteInterest" parameterType="com.yunji.model.Interest">
+        DELETE FROM interest WHERE userId = #{userId} AND toUserId = #{toUserId}  AND  circle = #{circle}  AND  scenario = #{scenario}
+
+
+    </delete>
+    
+    <delete id="deleteAllInterest" parameterType="java.lang.String">
+        DELETE FROM interest where userId = #{userId} OR toUserId = #{userId}
+    </delete>
+
+    <delete id="deleteAllAction" parameterType="java.lang.String">
+        DELETE FROM action WHERE userId = #{userId}
+    </delete>
+
+    <delete id="deleteAllComments" parameterType="java.lang.String">
+         DELETE FROM comment WHERE userId = #{userId}
+
+    </delete>
+
+    <select id="getWxInfo" parameterType="java.lang.String" resultType="com.yunji.model.UserWxInfo">
+        SELECT * FROM wxinfo WHERE userId = #{userId}
+
+    </select>
+
+    <delete id="deleteInterestById" parameterType="java.lang.Integer">
+        DELETE FROM interest WHERE id = #{id}
+    </delete>
+
+    <select id="getFocusMeAmount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(userId) FROM interest where toUserId = #{userId}
+    </select>
+
+    <select id="getFocusMeList" parameterType="java.util.HashMap" resultType="com.yunji.model.Interest">
+        SELECT * FROM interest
+        <where>
+            <if test="createTime != null">
+                toUserId=#{userId} AND createTime &lt; #{createTime} ORDER BY createTime DESC
+            </if>
+            <if test="createTime == null">
+                toUserId=#{userId} ORDER BY createTime DESC
+
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+
+        </where>
+    </select>
+    <insert id="saveOrganization" parameterType="com.yunji.model.Organization">
+        insert into organization(userId,organization,circle,createTime) values(#{userId},#{organization},#{circle},now())
+    </insert>
+    <delete id="deleteOrganization" parameterType="com.yunji.model.Organization">
+      DELETE FROM organization WHERE userId = #{userId} and organization = #{organization} and circle=#{circle}
+    </delete>
+    <select id="getOrganizationList" parameterType="java.util.Map" resultType="com.yunji.model.Organization">
+        SELECT * FROM organization
+
+      <where>
+          <if test="userId != null">
+              userId=#{userId}
+          </if>
+          <if test="createtime != null">
+              AND createtime &lt; #{createtime}
+          </if>
+          <if test="circle != null">
+           AND  circle = #{circle}
+          </if>
+          ORDER BY createtime DESC
+          <if test="limit != null">
+              limit #{limit}
+          </if>
+      </where>
+
+
+    </select>
+
+</mapper>

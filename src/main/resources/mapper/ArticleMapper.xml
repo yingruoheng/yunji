@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yunji.dao.ArticleMapper" >
+
+    <!--<resultMap id="BaseResultMap" type="com.yunji.model.Article">-->
+
+        <!--<id column="articleId" jdbcType="INTEGER" property="articleid" />-->
+        <!--<result column="userId" jdbcType="INTEGER" property="userid" />-->
+        <!--<result column="title" jdbcType="VARCHAR" property="title" />-->
+        <!--<result column="createtime" jdbcType="DATE" property="createtime" />-->
+        <!--<result column="htmlUrl" jdbcType="VARCHAR" property="htmlurl" />-->
+        <!--<result column="summary" jdbcType="VARCHAR" property="summary" />-->
+        <!--<result column="picUrl" jdbcType="VARCHAR" property="picurl" />-->
+        <!--<result column="size" jdbcType="VARCHAR" property="size" />-->
+        <!--<result column="mdUrl" jdbcType="VARCHAR" property="mdurl" />-->
+    <!--</resultMap>-->
+
+    <insert id="addArticle" parameterType="com.yunji.model.Article">
+        insert into article
+        (articleId,userId,username,title,circle,createtime,starttime,scenario,visibility,htmlUrl,summary,picUrl,size,mdUrl,shareVisibility,organization)
+        values
+        (#{articleId},#{userId},#{username},#{title},#{circle},#{createtime},#{starttime},#{scenario},#{visibility},#{htmlUrl},#{summary},#{picUrl},#{size},#{mdUrl},#{shareVisibility},#{organization})
+    </insert>
+
+    <select id="getRecommendArticle" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT * FROM article
+        <where>
+            <if test="articleId != null">
+                articleId &lt; #{articleId} AND visibility = 1 ORDER BY createtime DESC
+            </if>
+            <if test="articleId == null">
+                visibility = 1 ORDER BY createtime DESC
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+        </where>
+    </select>
+
+    <select id="getInterestArticle" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT ar.* FROM interest inter INNER JOIN article ar
+        ON inter.toUserId=ar.userId AND inter.circle=ar.circle AND inter.scenario=ar.scenario
+        <where>
+            <if test="articleId != null">
+                articleId &lt; #{articleId} AND visibility = 1 AND inter.userId=#{userId} AND ar.userId!=#{userId}
+                UNION SELECT * FROM article WHERE userId=#{userId} AND articleId &lt; #{articleId} ORDER BY createtime DESC
+            </if>
+            <if test="articleId == null">
+                visibility = 1 AND inter.userId=#{userId} AND ar.userId!=#{userId}
+                UNION SELECT * FROM article WHERE userId=#{userId} ORDER BY createtime DESC
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+        </where>
+    </select>
+
+    <select id="getScheduleArticle" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT ar.* FROM action ac INNER JOIN article ar ON ac.articleId = ar.articleId
+        <where>
+            starttime &gt; #{starttime} AND ac.userId=#{userId} AND actionType ='read' AND ar.userId!=#{userId}
+            UNION SELECT * FROM article WHERE userId=#{userId} AND starttime &gt; #{starttime} ORDER BY starttime DESC
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+        </where>
+    </select>
+
+    <select id="getWebRecArticle" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT * FROM article
+        <where>
+            <if test="articleId != null">
+                articleId &lt; #{articleId} AND visibility = 1 AND htmlUrl!='' AND mdUrl!='' ORDER BY createtime DESC
+            </if>
+            <if test="articleId == null">
+                visibility = 1 AND htmlUrl!='' AND mdUrl!='' ORDER BY createtime DESC
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="getArticleStar" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+      SELECT COUNT(actionType) FROM action WHERE articleId = 10000001 AND actionType = 1
+    </select>
+
+    <select id="getArticleComment" parameterType="java.lang.Integer" resultType="com.yunji.model.Comment">
+        SELECT * FROM comment
+        <where>
+            articleId = #{articleId}
+        </where>
+    </select>
+
+    <select id="selectReport" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT * FROM article c
+        <where>
+            <if test="articleId != null">
+                articleId &lt; #{articleId} AND c.articleId in
+                (SELECT a.articleId from articletag a LEFT JOIN articletag b on a.articleId = b.articleId where a.tagvalue=#{organization} and b.tagvalue='report')
+                ORDER BY createtime DESC
+            </if>
+            <if test="articleId == null">
+                c.articleId in
+                (SELECT a.articleId from articletag a LEFT JOIN articletag b on a.articleId = b.articleId where a.tagvalue=#{organization} and b.tagvalue='report')
+                ORDER BY createtime DESC
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getDetail" resultType="com.yunji.model.Article">
+      select * from article where articleId = (#{articleId});
+    </select>
+
+    <delete id="deleteAllArticles" parameterType="java.lang.String">
+      DELETE FROM article WHERE userId = #{userId}
+    </delete>
+
+    <select id="getUserArticle" parameterType="java.util.HashMap" resultType="com.yunji.model.Article">
+        SELECT * FROM article
+        <where>
+            <if test="articleId != null">
+                userId = #{userId} AND articleId &lt; #{articleId} ORDER BY createtime DESC
+            </if>
+            <if test="articleId == null">
+                userId = #{userId}  ORDER BY createtime DESC
+            </if>
+            <if test="limit != null">
+                limit #{limit}
+            </if>
+
+        </where>
+
+
+    </select>
+
+    <select id="getArticleStarCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(articleId) FROM action WHERE articleId = #{articleId} AND actionType = 'like'
+    </select>
+
+    <select id="getArticleReadCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(articleId) FROM action WHERE articleId = #{articleId} AND actionType = 'read'
+    </select>
+
+    <select id="getArticleCommentCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+      SELECT COUNT(articleId) FROM comment WHERE articleId = #{articleId}
+    </select>
+
+
+    <insert id="addInterest" parameterType="com.yunji.model.Interest">
+        replace into interest
+        (userId, toUserId, circle, scenario, createTime)
+        values
+        (#{userId}, #{toUserId}, #{circle}, #{scenario}, #{createTime})
+    </insert>
+
+
+    <delete id="deleteInterest" parameterType="com.yunji.model.Interest">
+        DELETE FROM interest WHERE userId = #{userId} AND toUserId = #{toUserId}  AND  circle = #{circle}  AND  scenario = #{scenario}
+    </delete>
+
+    <insert id="addAction" parameterType="com.yunji.model.Action">
+        insert into action
+        (userId,articleId,actionType,createtime)
+        values
+        (#{userId},#{articleId},#{actionType},#{createtime})
+    </insert>
+
+    <insert id="addOrganization" parameterType="com.yunji.model.Organization">
+        insert into organization
+        (userId,organization)
+        values
+        (#{userId},#{organization})
+    </insert>
+
+    <insert id="addComment" parameterType="com.yunji.model.Comment">
+        insert into comment
+        (userId,articleId,createtime,content)
+        values
+        (#{userId},#{articleId},#{createtime},#{content})
+    </insert>
+
+
+    <select id="getCommentsById" resultType="com.yunji.model.Comment">
+      select * from comment where articleId = (#{articleId}) ORDER BY createTime DESC;
+    </select>
+
+    <select id="getActionTypeById" resultType="int">
+      select count(*) from action where articleId = (#{articleId}) and actionType = (#{actionType});
+    </select>
+
+    <select id="getReadersIdByarticleId" resultType="com.yunji.model.Action">
+      select * from action where articleId = (#{articleId}) and actionType = (#{actionType});
+    </select>
+
+    <select id="getOrganizationByUserId" resultType="com.yunji.model.Organization">
+      select * from organization where userId = (#{userId});
+    </select>
+
+    <select id="getLikerNum" resultType="java.lang.Integer">
+      select count(*) from interest where userId = (#{userId}) and toUserId = (#{toUserId}) and circle = (#{circle}) and scenario = (#{scenario});
+    </select>
+
+    <select id="getArticleAmount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(articleId) from article WHERE userId = #{userId}
+
+    </select>
+
+    <select id="getAction" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT COUNT(*) from action WHERE userId = #{userId} and articleId = #{articleId} and actionType = #{actionType}
+
+    </select>
+
+    <select id="getInterest" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT COUNT(*) from interest WHERE userId = #{userId} and toUserId = #{toUserId} and scenario = #{scenario}
+
+    </select>
+
+    <delete id="deleteArticleAction" parameterType="java.lang.Integer">
+        DELETE FROM action where articleId = #{articleId}
+    </delete>
+    <delete id="deleteArticleComment" parameterType="java.lang.Integer">
+        DELETE FROM comment where articleId = #{articleId}
+    </delete>
+
+    <delete id="deleteArticle" parameterType="java.util.HashMap">
+        DELETE FROM article WHERE userId = #{userId} and articleId = #{articleId}
+
+    </delete>
+
+    <select id="getArticleAction" parameterType="java.util.Map" resultType="com.yunji.model.Action">
+        select * from action where articleId = #{articleId}
+    </select>
+
+    <select id="getArticleCategory" resultType="com.yunji.model.ArticleCategory">
+        SELECT * FROM articlecategory
+    </select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.yunji.dao.IUserDao">
+
+    <select id="selectUser" resultType="User" parameterType="String">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="insertOne" useGeneratedKeys="true" keyColumn="userId" keyProperty="userId" parameterType="User">
+        insert into user (registryId,registryway,createTime)values(#{registryId},#{registryId},now())
+    </insert>
+
+
+    
+    <resultMap id="TagList" type="com.yunji.model.Tag">
+        <result column="tagname" property="tagKey"/>
+        <result column="tagvalue" property="tagValue"/>
+    </resultMap>
+
+    <select id="selectUserTag" parameterType="String" resultMap="TagList">
+        select * from usertag where userId = #{userId}
+    </select>
+
+    <select id="getUserByName" resultType="User" parameterType="String">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <delete id="deleteUser" parameterType="java.lang.String">
+        DELETE FROM user where userId = #{userId}
+    </delete>
+
+
+
+
+</mapper>

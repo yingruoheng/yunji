@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为IUserDao接口方法提供sql语句配置 -->
+<mapper namespace="com.yunji.dao.UserWxInfoDao">
+
+    <select id="SelectByUnionId" resultType="com.yunji.model.UserWxInfo" parameterType="java.lang.String">
+        SELECT * FROM wxinfo WHERE unionid = #{unionId}
+    </select>
+
+    <insert id="insertOne" parameterType="UserWxInfo">
+        insert into wxinfo(unionId,userId,openId,country,province,city,nickname,sex,headimageurl,subscribe_time)values(#{unionId},#{userId},#{openId},#{country},
+        #{province},#{city},#{nickname},#{sex},#{headimageurl},#{subscribe_time})
+    </insert>
+
+    <delete id="deleteWxinfo" parameterType="java.lang.String">
+        DELETE FROM wxinfo WHERE userId = #{userId}
+    </delete>
+
+    <select id="selectByUserId" resultType="UserWxInfo" parameterType="String">
+        SELECT * FROM wxinfo WHERE userId = #{userId}
+    </select>
+
+</mapper>

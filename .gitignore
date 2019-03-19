@@ -1,0 +1,4 @@
+#忽略.idea下面的所有的文件
+
+# Editor directories and files
+.idea

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunji.dao.ThirdPartWayMapper" >
+  <resultMap id="BaseResultMap" type="com.yunji.model.ThirdPartWay" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="userId" property="userid" jdbcType="INTEGER" />
+    <id column="wayId" property="wayid" jdbcType="VARCHAR" />
+    <result column="way" property="way" jdbcType="VARCHAR" />
+    <result column="openId" property="openid" jdbcType="VARCHAR" />
+    <result column="unionId" property="unionid" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

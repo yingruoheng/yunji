@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunji.dao.TagMapper" >
+  <resultMap id="BaseResultMap" type="com.yunji.model.Tag" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="resourseId" property="resourseid" jdbcType="INTEGER" />
+    <result column="resoursename" property="resoursename" jdbcType="VARCHAR" />
+    <result column="resourcekey" property="resourcekey" jdbcType="VARCHAR" />
+    <result column="resourcevalue" property="resourcevalue" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

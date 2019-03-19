@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yunji.dao.UserTagMapper" >
+  <resultMap id="BaseResultMap" type="com.yunji.model.UserTag" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="tagname" property="tagname" jdbcType="VARCHAR" />
+    <result column="tagvalue" property="tagvalue" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
